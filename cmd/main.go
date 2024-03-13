@@ -28,6 +28,7 @@ func main() {
 
 	CompletionMessages(client)
 	FileUpload(client)
+	CompletionMessagesStop(client)
 }
 
 func CompletionMessages(client *dify.DifyClient) {
@@ -63,5 +64,15 @@ func FileUpload(client *dify.DifyClient) {
 		return
 	}
 	fmt.Println(fileUploadResponse)
+	fmt.Println()
+}
+
+func CompletionMessagesStop(client *dify.DifyClient) {
+	completionMessagesStopResponse, err := client.CompletionMessagesStop("0d2bd315-d4de-476f-ad5e-faaa00d571ea", "abc-123")
+	if err != nil {
+		log.Fatalf("failed to stop completion messages: %v\n", err)
+		return
+	}
+	fmt.Println(completionMessagesStopResponse)
 	fmt.Println()
 }
