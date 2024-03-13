@@ -23,6 +23,18 @@ if err != nil {
 
 see [example](./cmd/main.go).
 
+## Dify Client Config
+
+```go
+type DifyClientConfig struct {
+	Key     string // API Key
+	Host    string // API Host
+	Timeout int    // Client Request Timeout
+	SkipTLS bool   // Skip TLS Certs Verify (self-sign certs)
+	User    string // AppId, for analytics
+}
+```
+
 ## API: `/completion-messages`
 
 The most commonly used interface, used to call the model to generate content.
