@@ -40,7 +40,7 @@ func CompletionMessages(client *dify.DifyClient) (messageID string) {
 	}
 
 	// normal response
-	completionMessagesResponse, err := client.CompletionMessages(payload, "abc-123", "", nil)
+	completionMessagesResponse, err := client.CompletionMessages(payload, "", nil)
 	if err != nil {
 		log.Fatalf("failed to get completion messages: %v\n", err)
 		return
@@ -49,7 +49,7 @@ func CompletionMessages(client *dify.DifyClient) (messageID string) {
 	fmt.Println()
 
 	// streaming response
-	completionMessagesStreamingResponse, err := client.CompletionMessagesStreaming(payload, "abc-123", "", nil)
+	completionMessagesStreamingResponse, err := client.CompletionMessagesStreaming(payload, "", nil)
 	if err != nil {
 		log.Fatalf("failed to get completion messages: %v\n", err)
 		return
@@ -61,7 +61,7 @@ func CompletionMessages(client *dify.DifyClient) (messageID string) {
 }
 
 func FileUpload(client *dify.DifyClient) {
-	fileUploadResponse, err := client.FileUpload("./README.md", "readme.md", "abc-123")
+	fileUploadResponse, err := client.FileUpload("./README.md", "readme.md")
 	if err != nil {
 		log.Fatalf("failed to upload file: %v\n", err)
 		return
@@ -71,7 +71,7 @@ func FileUpload(client *dify.DifyClient) {
 }
 
 func CompletionMessagesStop(client *dify.DifyClient) {
-	completionMessagesStopResponse, err := client.CompletionMessagesStop("0d2bd315-d4de-476f-ad5e-faaa00d571ea", "abc-123")
+	completionMessagesStopResponse, err := client.CompletionMessagesStop("0d2bd315-d4de-476f-ad5e-faaa00d571ea")
 	if err != nil {
 		log.Fatalf("failed to stop completion messages: %v\n", err)
 		return
@@ -81,7 +81,7 @@ func CompletionMessagesStop(client *dify.DifyClient) {
 }
 
 func MessagesFeedbacks(client *dify.DifyClient, messageID string) {
-	messagesFeedbacksResponse, err := client.MessagesFeedbacks(messageID, "like", "abc-123")
+	messagesFeedbacksResponse, err := client.MessagesFeedbacks(messageID, "like")
 	if err != nil {
 		log.Fatalf("failed to get messages feedbacks: %v\n", err)
 		return

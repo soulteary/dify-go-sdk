@@ -13,6 +13,7 @@ type DifyClientConfig struct {
 	Host    string
 	Timeout int
 	SkipTLS bool
+	User    string
 }
 
 type DifyClient struct {
@@ -21,6 +22,7 @@ type DifyClient struct {
 	Timeout time.Duration
 	SkipTLS bool
 	Client  *http.Client
+	User    string
 }
 
 func CreateDifyClient(config DifyClientConfig) (*DifyClient, error) {
@@ -47,6 +49,11 @@ func CreateDifyClient(config DifyClientConfig) (*DifyClient, error) {
 		skipTLS = true
 	}
 
+	config.User = strings.TrimSpace(config.User)
+	if config.User == "" {
+		config.User = DEFAULT_USER
+	}
+
 	var client *http.Client
 
 	if skipTLS {
@@ -67,5 +74,6 @@ func CreateDifyClient(config DifyClientConfig) (*DifyClient, error) {
 		Timeout: timeout,
 		SkipTLS: skipTLS,
 		Client:  client,
+		User:    config.User,
 	}, nil
 }

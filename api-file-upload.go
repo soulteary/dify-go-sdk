@@ -20,7 +20,7 @@ type FileUploadResponse struct {
 	CreatedAt int    `json:"created_at"`
 }
 
-func (dc *DifyClient) FileUpload(filePath string, fileName string, user string) (result FileUploadResponse, err error) {
+func (dc *DifyClient) FileUpload(filePath string, fileName string) (result FileUploadResponse, err error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return result, fmt.Errorf("error opening file: %v", err)
@@ -39,7 +39,7 @@ func (dc *DifyClient) FileUpload(filePath string, fileName string, user string) 
 		return result, fmt.Errorf("error copying file: %v", err)
 	}
 
-	_ = writer.WriteField("user", user)
+	_ = writer.WriteField("user", dc.User)
 	err = writer.Close()
 	if err != nil {
 		return result, fmt.Errorf("error closing writer: %v", err)

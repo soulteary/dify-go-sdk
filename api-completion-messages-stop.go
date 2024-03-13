@@ -12,17 +12,13 @@ type CompletionMessagesStopResponse struct {
 	Result string `json:"result"`
 }
 
-func (dc *DifyClient) CompletionMessagesStop(task_id string, user string) (result CompletionMessagesStopResponse, err error) {
+func (dc *DifyClient) CompletionMessagesStop(task_id string) (result CompletionMessagesStopResponse, err error) {
 	if task_id == "" {
 		return result, fmt.Errorf("task_id is required")
 	}
 
-	if user == "" {
-		user = DEFAULT_USER
-	}
-
 	payloadBody := map[string]string{
-		"user": user,
+		"user": dc.User,
 	}
 
 	api := dc.GetAPI(API_COMPLETION_MESSAGES_STOP)

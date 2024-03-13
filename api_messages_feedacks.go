@@ -12,17 +12,13 @@ type MessagesFeedbacksResponse struct {
 	Result string `json:"result"`
 }
 
-func (dc *DifyClient) MessagesFeedbacks(message_id string, rating string, user string) (result MessagesFeedbacksResponse, err error) {
+func (dc *DifyClient) MessagesFeedbacks(message_id string, rating string) (result MessagesFeedbacksResponse, err error) {
 	if message_id == "" {
 		return result, fmt.Errorf("message_id is required")
 	}
 
-	if user == "" {
-		user = DEFAULT_USER
-	}
-
 	payloadBody := map[string]string{
-		"user":   user,
+		"user":   dc.User,
 		"rating": rating,
 	}
 

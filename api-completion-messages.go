@@ -34,7 +34,7 @@ func PrepareCompletionPayload(payload map[string]interface{}) (string, error) {
 	return string(jsonData), nil
 }
 
-func (dc *DifyClient) CompletionMessages(inputs string, user string, conversation_id string, files []any) (result CompletionMessagesResponse, err error) {
+func (dc *DifyClient) CompletionMessages(inputs string, conversation_id string, files []any) (result CompletionMessagesResponse, err error) {
 	var payload CompletionMessagesPayload
 
 	if len(inputs) == 0 {
@@ -49,12 +49,7 @@ func (dc *DifyClient) CompletionMessages(inputs string, user string, conversatio
 	}
 
 	payload.ResponseMode = RESPONSE_MODE_BLOCKING
-
-	if user == "" {
-		payload.User = DEFAULT_USER
-	} else {
-		payload.User = user
-	}
+	payload.User = dc.User
 
 	if conversation_id != "" {
 		payload.ConversationId = conversation_id
@@ -102,7 +97,7 @@ func (dc *DifyClient) CompletionMessages(inputs string, user string, conversatio
 	return result, nil
 }
 
-func (dc *DifyClient) CompletionMessagesStreaming(inputs string, user string, conversation_id string, files []any) (result string, err error) {
+func (dc *DifyClient) CompletionMessagesStreaming(inputs string, conversation_id string, files []any) (result string, err error) {
 	var payload CompletionMessagesPayload
 
 	if len(inputs) == 0 {
@@ -117,12 +112,7 @@ func (dc *DifyClient) CompletionMessagesStreaming(inputs string, user string, co
 	}
 
 	payload.ResponseMode = RESPONSE_MODE_STREAMING
-
-	if user == "" {
-		payload.User = DEFAULT_USER
-	} else {
-		payload.User = user
-	}
+	payload.User = dc.User
 
 	if conversation_id != "" {
 		payload.ConversationId = conversation_id
