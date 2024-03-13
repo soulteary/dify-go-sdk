@@ -5,7 +5,7 @@ Golang SDK for [langgenius/dify](https://github.com/langgenius/dify) .
 ## Quick Start
 
 ```bash
-go get soulteary/dify-go-sdk
+go get github.com/soulteary/dify-go-sdk
 ```
 
 Create a Dify client that can invoke various capabilities.
