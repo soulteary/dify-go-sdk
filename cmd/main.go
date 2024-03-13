@@ -30,8 +30,8 @@ func main() {
 	FileUpload(client)
 	CompletionMessagesStop(client)
 	MessagesFeedbacks(client, msgID)
-
 	GetParameters(client)
+	TextToAudio(client)
 }
 
 func CompletionMessages(client *dify.DifyClient) (messageID string) {
@@ -99,5 +99,23 @@ func GetParameters(client *dify.DifyClient) {
 		return
 	}
 	fmt.Println(parametersResponse)
+	fmt.Println()
+}
+
+func TextToAudio(client *dify.DifyClient) {
+	textToAudioResponse, err := client.TextToAudio("hello world")
+	if err != nil {
+		log.Fatalf("failed to get text to audio: %v\n", err)
+		return
+	}
+	fmt.Println(textToAudioResponse)
+	fmt.Println()
+
+	textToAudioStreamingResponse, err := client.TextToAudioStreaming("hello world")
+	if err != nil {
+		log.Fatalf("failed to get text to audio streaming: %v\n", err)
+		return
+	}
+	fmt.Println(textToAudioStreamingResponse)
 	fmt.Println()
 }
