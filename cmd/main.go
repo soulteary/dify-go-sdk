@@ -37,20 +37,20 @@ func CompletionMessages(client *dify.DifyClient) {
 	}
 
 	// normal response
-	response, err := client.CompletionMessages(payload, dify.RESPONSE_MODE_STREAMING, "abc-123", nil)
+	completionMessagesResponse, err := client.CompletionMessages(payload, "abc-123", "", nil)
 	if err != nil {
 		log.Fatalf("failed to get completion messages: %v\n", err)
 		return
 	}
-	fmt.Println(response)
+	fmt.Println(completionMessagesResponse)
 	fmt.Println()
 
 	// streaming response
-	response, err = client.CompletionMessagesStreaming(payload, dify.RESPONSE_MODE_BLOCKING, "abc-123", nil)
+	completionMessagesStreamingResponse, err := client.CompletionMessagesStreaming(payload, "abc-123", "", nil)
 	if err != nil {
 		log.Fatalf("failed to get completion messages: %v\n", err)
 		return
 	}
-	fmt.Println(response)
+	fmt.Println(completionMessagesStreamingResponse)
 	fmt.Println()
 }
