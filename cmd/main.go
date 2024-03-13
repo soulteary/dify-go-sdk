@@ -30,6 +30,8 @@ func main() {
 	FileUpload(client)
 	CompletionMessagesStop(client)
 	MessagesFeedbacks(client, msgID)
+
+	GetParameters(client)
 }
 
 func CompletionMessages(client *dify.DifyClient) (messageID string) {
@@ -87,5 +89,15 @@ func MessagesFeedbacks(client *dify.DifyClient, messageID string) {
 		return
 	}
 	fmt.Println(messagesFeedbacksResponse)
+	fmt.Println()
+}
+
+func GetParameters(client *dify.DifyClient) {
+	parametersResponse, err := client.GetParameters()
+	if err != nil {
+		log.Fatalf("failed to get parameters: %v\n", err)
+		return
+	}
+	fmt.Println(parametersResponse)
 	fmt.Println()
 }
