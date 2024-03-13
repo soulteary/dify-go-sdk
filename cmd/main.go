@@ -26,18 +26,31 @@ func main() {
 		return
 	}
 
-	fmt.Println(client)
+	CompletionMessages(client)
+}
 
+func CompletionMessages(client *dify.DifyClient) {
 	payload, err := dify.PrepareCompletionPayload(map[string]interface{}{"query": "hey"})
 	if err != nil {
 		log.Fatalf("failed to prepare payload: %v\n", err)
 		return
 	}
 
-	response, err := client.CompletionMessages(payload, dify.RESPONSE_MODE_STREAMING, "abc-123", "", nil)
+	// normal response
+	response, err := client.CompletionMessages(payload, dify.RESPONSE_MODE_STREAMING, "abc-123", nil)
 	if err != nil {
 		log.Fatalf("failed to get completion messages: %v\n", err)
 		return
 	}
 	fmt.Println(response)
+	fmt.Println()
+
+	// streaming response
+	response, err = client.CompletionMessagesStreaming(payload, dify.RESPONSE_MODE_BLOCKING, "abc-123", nil)
+	if err != nil {
+		log.Fatalf("failed to get completion messages: %v\n", err)
+		return
+	}
+	fmt.Println(response)
+	fmt.Println()
 }
