@@ -27,6 +27,7 @@ func main() {
 	}
 
 	CompletionMessages(client)
+	FileUpload(client)
 }
 
 func CompletionMessages(client *dify.DifyClient) {
@@ -52,5 +53,15 @@ func CompletionMessages(client *dify.DifyClient) {
 		return
 	}
 	fmt.Println(completionMessagesStreamingResponse)
+	fmt.Println()
+}
+
+func FileUpload(client *dify.DifyClient) {
+	fileUploadResponse, err := client.FileUpload("./README.md", "readme.md", "abc-123")
+	if err != nil {
+		log.Fatalf("failed to upload file: %v\n", err)
+		return
+	}
+	fmt.Println(fileUploadResponse)
 	fmt.Println()
 }
