@@ -26,12 +26,13 @@ func main() {
 		return
 	}
 
-	CompletionMessages(client)
+	msgID := CompletionMessages(client)
 	FileUpload(client)
 	CompletionMessagesStop(client)
+	MessagesFeedbacks(client, msgID)
 }
 
-func CompletionMessages(client *dify.DifyClient) {
+func CompletionMessages(client *dify.DifyClient) (messageID string) {
 	payload, err := dify.PrepareCompletionPayload(map[string]interface{}{"query": "hey"})
 	if err != nil {
 		log.Fatalf("failed to prepare payload: %v\n", err)
@@ -55,6 +56,8 @@ func CompletionMessages(client *dify.DifyClient) {
 	}
 	fmt.Println(completionMessagesStreamingResponse)
 	fmt.Println()
+
+	return completionMessagesResponse.MessageID
 }
 
 func FileUpload(client *dify.DifyClient) {
@@ -74,5 +77,15 @@ func CompletionMessagesStop(client *dify.DifyClient) {
 		return
 	}
 	fmt.Println(completionMessagesStopResponse)
+	fmt.Println()
+}
+
+func MessagesFeedbacks(client *dify.DifyClient, messageID string) {
+	messagesFeedbacksResponse, err := client.MessagesFeedbacks(messageID, "like", "abc-123")
+	if err != nil {
+		log.Fatalf("failed to get messages feedbacks: %v\n", err)
+		return
+	}
+	fmt.Println(messagesFeedbacksResponse)
 	fmt.Println()
 }
