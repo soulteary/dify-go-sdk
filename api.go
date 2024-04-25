@@ -9,6 +9,7 @@ const (
 	API_CHAT_MESSAGES      = "/chat-messages"
 	API_CHAT_MESSAGES_STOP = "/chat-messages/:task_id/stop"
 
+	API_MESSAGES           = "/messages"
 	API_MESSAGES_SUGGESTED = "/messages/:message_id/suggested"
 	API_MESSAGES_FEEDBACKS = "/messages/:message_id/feedbacks"
 
