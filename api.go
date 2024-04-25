@@ -13,8 +13,10 @@ const (
 	API_MESSAGES_SUGGESTED = "/messages/:message_id/suggested"
 	API_MESSAGES_FEEDBACKS = "/messages/:message_id/feedbacks"
 
-	API_FILE_UPLOAD   = "/files/upload"
-	API_PARAMETERS    = "/parameters"
+	API_FILE_UPLOAD = "/files/upload"
+	API_PARAMETERS  = "/parameters"
+
+	API_AUDIO_TO_TEXT = "/audio-to-text"
 	API_TEXT_TO_AUDIO = "/text-to-audio"
 
 	API_PARAM_TASK_ID    = ":task_id"
