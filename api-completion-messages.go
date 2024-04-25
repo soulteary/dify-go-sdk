@@ -12,7 +12,7 @@ type CompletionMessagesPayload struct {
 	Inputs         any    `json:"inputs"`
 	ResponseMode   string `json:"response_mode,omitempty"`
 	User           string `json:"user"`
-	ConversationId string `json:"conversation_id,omitempty"`
+	ConversationID string `json:"conversation_id,omitempty"`
 }
 
 type CompletionMessagesResponse struct {
@@ -52,7 +52,7 @@ func (dc *DifyClient) CompletionMessages(inputs string, conversation_id string, 
 	payload.User = dc.User
 
 	if conversation_id != "" {
-		payload.ConversationId = conversation_id
+		payload.ConversationID = conversation_id
 	}
 
 	if len(files) > 0 {
@@ -115,7 +115,7 @@ func (dc *DifyClient) CompletionMessagesStreaming(inputs string, conversation_id
 	payload.User = dc.User
 
 	if conversation_id != "" {
-		payload.ConversationId = conversation_id
+		payload.ConversationID = conversation_id
 	}
 
 	if len(files) > 0 {
