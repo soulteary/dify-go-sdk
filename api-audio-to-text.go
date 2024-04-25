@@ -2,6 +2,7 @@ package dify
 
 import (
 	"bytes"
+	"encoding/json"
 	"fmt"
 	"io"
 	"mime/multipart"
@@ -10,7 +11,11 @@ import (
 	"path/filepath"
 )
 
-func (dc *DifyClient) AudioToText(filePath string) (result any, err error) {
+type AudioToTextResponse struct {
+	Text string `json:"text"`
+}
+
+func (dc *DifyClient) AudioToText(filePath string) (result AudioToTextResponse, err error) {
 	payload := &bytes.Buffer{}
 	writer := multipart.NewWriter(payload)
 
@@ -57,5 +62,11 @@ func (dc *DifyClient) AudioToText(filePath string) (result any, err error) {
 	if err != nil {
 		return result, fmt.Errorf("could not read the body: %v", err)
 	}
-	return body, nil
+
+	err = json.Unmarshal(body, &result)
+	if err != nil {
+		return result, fmt.Errorf("failed to unmarshal the response: %v", err)
+	}
+
+	return result, nil
 }
