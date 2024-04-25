@@ -15,6 +15,7 @@ const (
 
 	API_FILE_UPLOAD = "/files/upload"
 	API_PARAMETERS  = "/parameters"
+	API_META        = "/meta"
 
 	API_AUDIO_TO_TEXT = "/audio-to-text"
 	API_TEXT_TO_AUDIO = "/text-to-audio"
