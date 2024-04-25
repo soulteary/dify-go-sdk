@@ -4,7 +4,8 @@ import (
 	"fmt"
 	"log"
 	"os"
-	dify "soulteary/dify-go-sdk"
+
+	dify "github.com/soulteary/dify-go-sdk"
 )
 
 func main() {
