@@ -1,7 +1,6 @@
 package dify
 
 import (
-	"bytes"
 	"encoding/json"
 	"fmt"
 	"io"
@@ -77,43 +76,20 @@ type CreateDatasetsResponse struct {
 }
 
 func (dc *DifyClient) CreateDatasets(datasets_name string) (result CreateDatasetsResponse, err error) {
-	payloadBody := &CreateDatasetsPayload{
+	payload := &CreateDatasetsPayload{
 		Name: datasets_name,
 	}
 
 	api := dc.GetConsoleAPI(CONSOLE_API_DATASETS_CREATE)
 
-	buf, err := json.Marshal(payloadBody)
-	if err != nil {
-		return result, err
-	}
-	req, err := http.NewRequest("POST", api, bytes.NewBuffer(buf))
-	if err != nil {
-		return result, fmt.Errorf("could not create a new request: %v", err)
-	}
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", dc.ConsoleToken))
-	req.Header.Set("Content-Type", "application/json")
+	code, body, err := SendPostRequestToConsole(dc, api, payload)
 
-	resp, err := dc.Client.Do(req)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 201 {
-		bodyText, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return result, fmt.Errorf("status code: %d, could not read the body", resp.StatusCode)
-		}
-		return result, fmt.Errorf("status code: %d, %s", resp.StatusCode, bodyText)
-	}
-
-	bodyText, err := io.ReadAll(resp.Body)
+	err = CommonRiskForSendRequestWithCode(code, err, http.StatusCreated)
 	if err != nil {
 		return result, err
 	}
 
-	err = json.Unmarshal(bodyText, &result)
+	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return result, fmt.Errorf("failed to unmarshal the response: %v", err)
 	}

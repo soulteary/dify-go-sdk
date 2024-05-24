@@ -3,9 +3,6 @@ package dify
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"strings"
 )
 
 type UserLoginParams struct {
@@ -26,38 +23,16 @@ func (dc *DifyClient) UserLogin(email string, password string) (result UserLogin
 		RememberMe: true,
 	}
 
-	buf, err := json.Marshal(payload)
+	api := dc.GetConsoleAPI(CONSOLE_API_LOGIN)
+
+	code, body, err := SendPostRequestToConsole(dc, api, payload)
+
+	err = CommonRiskForSendRequest(code, err)
 	if err != nil {
 		return result, err
 	}
 
-	req, err := http.NewRequest("POST", dc.GetConsoleAPI(CONSOLE_API_LOGIN), strings.NewReader(string(buf)))
-	if err != nil {
-		return result, err
-	}
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", ""))
-	req.Header.Set("Content-Type", "application/json")
-
-	resp, err := dc.Client.Do(req)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		bodyText, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return result, fmt.Errorf("status code: %d, could not read the body", resp.StatusCode)
-		}
-		return result, fmt.Errorf("status code: %d, %s", resp.StatusCode, bodyText)
-	}
-
-	bodyText, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return result, err
-	}
-
-	err = json.Unmarshal(bodyText, &result)
+	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return result, fmt.Errorf("failed to unmarshal the response: %v", err)
 	}

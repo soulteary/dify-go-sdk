@@ -39,23 +39,50 @@ func main() {
 	CONSOLE_USER := os.Getenv("DIFY_CONSOLE_USER")
 	CONSOLE_PASS := os.Getenv("DIFY_CONSOLE_PASS")
 	if CONSOLE_USER != "" && CONSOLE_PASS != "" {
+		log.Println("Get Console Token")
 		token := GetUserToken(client, CONSOLE_USER, CONSOLE_PASS)
-
-		fmt.Println("Console Token:", token)
+		if token == "" {
+			log.Fatalf("failed to get console token\n")
+		}
 		client.ConsoleToken = token
 
-		datasetsID := CreateDatasets(client)
+		// Create datasets
+		var datasetsID string
+		log.Println("Create datasets")
+		createResult, err := client.CreateDatasets("test datasets")
+		if err != nil {
+			log.Fatalf("failed to create datasets: %v\n", err)
+			return
+		}
+		datasetsID = createResult.ID
+		log.Println(createResult)
 
-		datasets := ListDatasets(client)
-		if len(datasets.Data) > 0 {
-			for _, dataset := range datasets.Data {
-				if dataset.ID == datasetsID {
-					DeleteDatasets(client, datasetsID)
+		// List datasets
+		log.Println("List datasets")
+		ListResult, err := client.ListDatasets(1, 30)
+		if err != nil {
+			log.Fatalf("failed to list datasets: %v\n", err)
+			return
+		}
+		if len(ListResult.Data) == 0 {
+			log.Fatalf("no datasets found\n")
+			return
+		}
+		for _, dataset := range ListResult.Data {
+			if dataset.ID == datasetsID {
+				// Delete datasets
+				log.Println("Delete datasets")
+				result, err := client.DeleteDatasets(datasetsID)
+				if err != nil {
+					log.Fatalf("failed to delete datasets: %v\n", err)
+					return
 				}
+				log.Println(result)
 			}
 		}
 
 		// Get the list of rerank models
+		log.Println("List rerank models")
 		reRankModels, err := client.ListWorkspacesRerankModels()
 		if err != nil {
 			log.Println("failed to list rerank models:", err)
@@ -171,33 +198,6 @@ func UploadFileToDatasets(client *dify.DifyClient) {
 	result, err := client.DatasetsFileUpload("testfile-for-dify-database.txt", "testfile-for-dify-database.txt")
 	if err != nil {
 		log.Fatalf("failed to upload file to datasets: %v\n", err)
-		return
-	}
-	fmt.Println(result)
-}
-
-func CreateDatasets(client *dify.DifyClient) string {
-	result, err := client.CreateDatasets("test datasets")
-	if err != nil {
-		log.Fatalf("failed to create datasets: %v\n", err)
-		return ""
-	}
-	return result.ID
-}
-
-func ListDatasets(client *dify.DifyClient) (result dify.ListDatasetsResponse) {
-	result, err := client.ListDatasets(1, 30)
-	if err != nil {
-		log.Fatalf("failed to list datasets: %v\n", err)
-		return result
-	}
-	return result
-}
-
-func DeleteDatasets(client *dify.DifyClient, datasets_id string) {
-	result, err := client.DeleteDatasets(datasets_id)
-	if err != nil {
-		log.Fatalf("failed to delete datasets: %v\n", err)
 		return
 	}
 	fmt.Println(result)
