@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
-	"log"
 	"net/http"
 )
 
@@ -165,25 +164,14 @@ func (dc *DifyClient) ListDatasets(page int, limit int) (result ListDatasetsResp
 	api := dc.GetConsoleAPI(CONSOLE_API_DATASETS_LIST)
 	api = fmt.Sprintf("%s?page=%d&limit=%d", api, page, limit)
 
-	req, err := http.NewRequest("GET", api, nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", dc.ConsoleToken))
-	req.Header.Set("Content-Type", "application/json")
+	code, body, err := SendGetRequestToConsole(dc, api)
 
-	resp, err := dc.Client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer resp.Body.Close()
-
-	bodyText, err := io.ReadAll(resp.Body)
+	err = CommonRiskForSendRequest(code, err)
 	if err != nil {
 		return result, err
 	}
 
-	err = json.Unmarshal(bodyText, &result)
+	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return result, fmt.Errorf("failed to unmarshal the response: %v", err)
 	}
