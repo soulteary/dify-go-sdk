@@ -21,7 +21,9 @@ func main() {
 		return
 	}
 
-	client, err := dify.CreateDifyClient(dify.DifyClientConfig{Key: APIKey, Host: APIHost})
+	ConsoleHost := os.Getenv("DIFY_CONSOLE_HOST")
+
+	client, err := dify.CreateDifyClient(dify.DifyClientConfig{Key: APIKey, Host: APIHost, ConsoleHost: ConsoleHost})
 	if err != nil {
 		log.Fatalf("failed to create DifyClient: %v\n", err)
 		return
@@ -32,7 +34,17 @@ func main() {
 	CompletionMessagesStop(client)
 	MessagesFeedbacks(client, msgID)
 	GetParameters(client)
-	TextToAudio(client)
+	// TextToAudio(client)
+
+	CONSOLE_USER := os.Getenv("DIFY_CONSOLE_USER")
+	CONSOLE_PASS := os.Getenv("DIFY_CONSOLE_PASS")
+	if CONSOLE_USER != "" && CONSOLE_PASS != "" {
+		token := GetUserToken(client, CONSOLE_USER, CONSOLE_PASS)
+
+		fmt.Println("Console Token:", token)
+		client.ConsoleToken = token
+		UploadFileToDatasets(client)
+	}
 }
 
 func CompletionMessages(client *dify.DifyClient) (messageID string) {
@@ -119,4 +131,27 @@ func TextToAudio(client *dify.DifyClient) {
 	}
 	fmt.Println(textToAudioStreamingResponse)
 	fmt.Println()
+}
+
+func GetUserToken(client *dify.DifyClient, email, password string) string {
+	result, err := client.UserLogin(email, password)
+	if err != nil {
+		log.Fatalf("failed to login: %v\n", err)
+		return ""
+	}
+	return result.Data
+}
+
+func UploadFileToDatasets(client *dify.DifyClient) {
+	err := os.WriteFile("testfile-for-dify-database.txt", []byte("test file for dify database"), 0644)
+	if err != nil {
+		log.Fatalf("failed to create file: %v\n", err)
+		return
+	}
+	result, err := client.DatasetsFileUpload("testfile-for-dify-database.txt", "testfile-for-dify-database.txt")
+	if err != nil {
+		log.Fatalf("failed to upload file to datasets: %v\n", err)
+		return
+	}
+	fmt.Println(result)
 }

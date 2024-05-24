@@ -9,20 +9,23 @@ import (
 )
 
 type DifyClientConfig struct {
-	Key     string
-	Host    string
-	Timeout int
-	SkipTLS bool
-	User    string
+	Key         string
+	Host        string
+	ConsoleHost string
+	Timeout     int
+	SkipTLS     bool
+	User        string
 }
 
 type DifyClient struct {
-	Key     string
-	Host    string
-	Timeout time.Duration
-	SkipTLS bool
-	Client  *http.Client
-	User    string
+	Key          string
+	Host         string
+	ConsoleHost  string
+	ConsoleToken string
+	Timeout      time.Duration
+	SkipTLS      bool
+	Client       *http.Client
+	User         string
 }
 
 func CreateDifyClient(config DifyClientConfig) (*DifyClient, error) {
@@ -34,6 +37,12 @@ func CreateDifyClient(config DifyClientConfig) (*DifyClient, error) {
 	host := strings.TrimSpace(config.Host)
 	if host == "" {
 		return nil, fmt.Errorf("dify Host is required")
+	}
+
+	consoleURL := strings.TrimSpace(config.ConsoleHost)
+	if consoleURL == "" {
+		consoleURL = strings.ReplaceAll(host, "/v1", "/console/api")
+		fmt.Println("Console URL is not provided, use default value", consoleURL)
 	}
 
 	timeout := 0 * time.Second
@@ -69,11 +78,12 @@ func CreateDifyClient(config DifyClientConfig) (*DifyClient, error) {
 	}
 
 	return &DifyClient{
-		Key:     key,
-		Host:    host,
-		Timeout: timeout,
-		SkipTLS: skipTLS,
-		Client:  client,
-		User:    config.User,
+		Key:         key,
+		Host:        host,
+		ConsoleHost: consoleURL,
+		Timeout:     timeout,
+		SkipTLS:     skipTLS,
+		Client:      client,
+		User:        config.User,
 	}, nil
 }

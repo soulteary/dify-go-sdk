@@ -27,10 +27,17 @@ const (
 	API_PARAM_TASK_ID         = ":task_id"
 	API_PARAM_MESSAGE_ID      = ":message_id"
 	API_PARAM_CONVERSATION_ID = ":conversation_id"
+
+	CONSOLE_API_FILE_UPLOAD = "/files/upload?source=datasets"
+	CONSOLE_API_LOGIN       = "/login"
 )
 
 func (dc *DifyClient) GetAPI(api string) string {
 	return dc.Host + api
+}
+
+func (dc *DifyClient) GetConsoleAPI(api string) string {
+	return dc.ConsoleHost + api
 }
 
 func UpdateAPIParam(api, key, value string) string {
