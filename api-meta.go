@@ -3,9 +3,6 @@ package dify
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"log"
-	"net/http"
 )
 
 type GetMetaResponse struct {
@@ -19,25 +16,15 @@ type GetMetaResponse struct {
 }
 
 func (dc *DifyClient) GetMeta() (result GetMetaResponse, err error) {
-	req, err := http.NewRequest("GET", dc.GetAPI(API_META), nil)
-	if err != nil {
-		log.Fatal(err)
-	}
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", dc.Key))
-	req.Header.Set("Content-Type", "application/json")
+	api := dc.GetAPI(API_META)
+	code, body, err := SendGetRequestToAPI(dc, api)
 
-	resp, err := dc.Client.Do(req)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer resp.Body.Close()
-
-	bodyText, err := io.ReadAll(resp.Body)
+	err = CommonRiskForSendRequest(code, err)
 	if err != nil {
 		return result, err
 	}
 
-	err = json.Unmarshal(bodyText, &result)
+	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return result, fmt.Errorf("failed to unmarshal the response: %v", err)
 	}

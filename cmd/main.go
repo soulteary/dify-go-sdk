@@ -29,11 +29,24 @@ func main() {
 		return
 	}
 
+	metas, err := client.GetMeta()
+	if err != nil {
+		log.Fatalf("failed to get meta: %v\n", err)
+		return
+	}
+	fmt.Println(metas)
+
+	parametersResponse, err := client.GetParameters()
+	if err != nil {
+		log.Fatalf("failed to get parameters: %v\n", err)
+		return
+	}
+	fmt.Println(parametersResponse)
+
 	// msgID := CompletionMessages(client)
 	// FileUpload(client)
 	// CompletionMessagesStop(client)
 	// MessagesFeedbacks(client, msgID)
-	// GetParameters(client)
 	// TextToAudio(client)
 
 	CONSOLE_USER := os.Getenv("DIFY_CONSOLE_USER")
@@ -149,16 +162,6 @@ func MessagesFeedbacks(client *dify.DifyClient, messageID string) {
 		return
 	}
 	fmt.Println(messagesFeedbacksResponse)
-	fmt.Println()
-}
-
-func GetParameters(client *dify.DifyClient) {
-	parametersResponse, err := client.GetParameters()
-	if err != nil {
-		log.Fatalf("failed to get parameters: %v\n", err)
-		return
-	}
-	fmt.Println(parametersResponse)
 	fmt.Println()
 }
 
