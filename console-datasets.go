@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"log"
 	"net/http"
 )
 
@@ -107,6 +108,75 @@ func (dc *DifyClient) CreateDatasets(datasets_name string) (result CreateDataset
 		}
 		return result, fmt.Errorf("status code: %d, %s", resp.StatusCode, bodyText)
 	}
+
+	bodyText, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return result, err
+	}
+
+	err = json.Unmarshal(bodyText, &result)
+	if err != nil {
+		return result, fmt.Errorf("failed to unmarshal the response: %v", err)
+	}
+	return result, nil
+}
+
+type ListDatasetsResponse struct {
+	Page    int                `json:"page"`
+	Limit   int                `json:"limit"`
+	Total   int                `json:"total"`
+	HasMore bool               `json:"has_more"`
+	Data    []ListDatasetsItem `json:"data"`
+}
+
+type ListDatasetsItem struct {
+	ID             string                  `json:"id"`
+	Name           string                  `json:"name"`
+	Description    string                  `json:"description"`
+	Mode           string                  `json:"mode"`
+	Icon           string                  `json:"icon"`
+	IconBackground string                  `json:"icon_background"`
+	ModelConfig    ListDatasetsModelConfig `json:"model_config"`
+	CreatedAt      int                     `json:"created_at"`
+	Tags           []any                   `json:"tags"`
+}
+
+type ListDatasetsModelConfig struct {
+	Model     ListDatasetsModelConfigDetail `json:"model"`
+	PrePrompt string                        `json:"pre_prompt"`
+}
+
+type ListDatasetsModelConfigDetail struct {
+	Provider         string `json:"provider"`
+	Name             string `json:"name"`
+	Mode             string `json:"mode"`
+	CompletionParams struct {
+	} `json:"completion_params"`
+}
+
+func (dc *DifyClient) ListDatasets(page int, limit int) (result ListDatasetsResponse, err error) {
+	if page < 1 {
+		return result, fmt.Errorf("page should be greater than 0")
+	}
+	if limit < 1 {
+		return result, fmt.Errorf("limit should be greater than 0")
+	}
+
+	api := dc.GetConsoleAPI(CONSOLE_API_DATASETS_LIST)
+	api = fmt.Sprintf("%s?page=%d&limit=%d", api, page, limit)
+
+	req, err := http.NewRequest("GET", api, nil)
+	if err != nil {
+		log.Fatal(err)
+	}
+	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", dc.ConsoleToken))
+	req.Header.Set("Content-Type", "application/json")
+
+	resp, err := dc.Client.Do(req)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer resp.Body.Close()
 
 	bodyText, err := io.ReadAll(resp.Body)
 	if err != nil {

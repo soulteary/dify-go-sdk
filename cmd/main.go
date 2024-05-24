@@ -29,12 +29,12 @@ func main() {
 		return
 	}
 
-	// msgID := CompletionMessages(client)
-	// FileUpload(client)
-	// CompletionMessagesStop(client)
-	// MessagesFeedbacks(client, msgID)
-	// GetParameters(client)
-	// TextToAudio(client)
+	msgID := CompletionMessages(client)
+	FileUpload(client)
+	CompletionMessagesStop(client)
+	MessagesFeedbacks(client, msgID)
+	GetParameters(client)
+	TextToAudio(client)
 
 	CONSOLE_USER := os.Getenv("DIFY_CONSOLE_USER")
 	CONSOLE_PASS := os.Getenv("DIFY_CONSOLE_PASS")
@@ -45,9 +45,17 @@ func main() {
 		client.ConsoleToken = token
 
 		datasetsID := CreateDatasets(client)
-		DeleteDatasets(client, datasetsID)
 
-		UploadFileToDatasets(client)
+		datasets := ListDatasets(client)
+		if len(datasets.Data) > 0 {
+			for _, dataset := range datasets.Data {
+				if dataset.ID == datasetsID {
+					DeleteDatasets(client, datasetsID)
+				}
+			}
+		}
+
+		// UploadFileToDatasets(client)
 	}
 }
 
@@ -167,6 +175,15 @@ func CreateDatasets(client *dify.DifyClient) string {
 		return ""
 	}
 	return result.ID
+}
+
+func ListDatasets(client *dify.DifyClient) (result dify.ListDatasetsResponse) {
+	result, err := client.ListDatasets(1, 30)
+	if err != nil {
+		log.Fatalf("failed to list datasets: %v\n", err)
+		return result
+	}
+	return result
 }
 
 func DeleteDatasets(client *dify.DifyClient, datasets_id string) {
