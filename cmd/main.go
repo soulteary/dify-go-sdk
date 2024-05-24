@@ -29,11 +29,11 @@ func main() {
 		return
 	}
 
-	msgID := CompletionMessages(client)
-	FileUpload(client)
-	CompletionMessagesStop(client)
-	MessagesFeedbacks(client, msgID)
-	GetParameters(client)
+	// msgID := CompletionMessages(client)
+	// FileUpload(client)
+	// CompletionMessagesStop(client)
+	// MessagesFeedbacks(client, msgID)
+	// GetParameters(client)
 	// TextToAudio(client)
 
 	CONSOLE_USER := os.Getenv("DIFY_CONSOLE_USER")
@@ -43,6 +43,10 @@ func main() {
 
 		fmt.Println("Console Token:", token)
 		client.ConsoleToken = token
+
+		datasetsID := CreateDatasets(client)
+		DeleteDatasets(client, datasetsID)
+
 		UploadFileToDatasets(client)
 	}
 }
@@ -151,6 +155,24 @@ func UploadFileToDatasets(client *dify.DifyClient) {
 	result, err := client.DatasetsFileUpload("testfile-for-dify-database.txt", "testfile-for-dify-database.txt")
 	if err != nil {
 		log.Fatalf("failed to upload file to datasets: %v\n", err)
+		return
+	}
+	fmt.Println(result)
+}
+
+func CreateDatasets(client *dify.DifyClient) string {
+	result, err := client.CreateDatasets("test datasets")
+	if err != nil {
+		log.Fatalf("failed to create datasets: %v\n", err)
+		return ""
+	}
+	return result.ID
+}
+
+func DeleteDatasets(client *dify.DifyClient, datasets_id string) {
+	result, err := client.DeleteDatasets(datasets_id)
+	if err != nil {
+		log.Fatalf("failed to delete datasets: %v\n", err)
 		return
 	}
 	fmt.Println(result)

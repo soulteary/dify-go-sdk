@@ -30,6 +30,10 @@ const (
 
 	CONSOLE_API_FILE_UPLOAD = "/files/upload?source=datasets"
 	CONSOLE_API_LOGIN       = "/login"
+
+	CONSOLE_API_DATASETS_CREATE   = "/datasets"
+	CONSOLE_API_DATASETS_DELETE   = "/datasets/:datasets_id"
+	CONSOLE_API_PARAM_DATASETS_ID = ":datasets_id"
 )
 
 func (dc *DifyClient) GetAPI(api string) string {
