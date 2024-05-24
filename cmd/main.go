@@ -29,12 +29,12 @@ func main() {
 		return
 	}
 
-	msgID := CompletionMessages(client)
-	FileUpload(client)
-	CompletionMessagesStop(client)
-	MessagesFeedbacks(client, msgID)
-	GetParameters(client)
-	TextToAudio(client)
+	// msgID := CompletionMessages(client)
+	// FileUpload(client)
+	// CompletionMessagesStop(client)
+	// MessagesFeedbacks(client, msgID)
+	// GetParameters(client)
+	// TextToAudio(client)
 
 	CONSOLE_USER := os.Getenv("DIFY_CONSOLE_USER")
 	CONSOLE_PASS := os.Getenv("DIFY_CONSOLE_PASS")
@@ -53,6 +53,14 @@ func main() {
 					DeleteDatasets(client, datasetsID)
 				}
 			}
+		}
+
+		// Get the list of rerank models
+		reRankModels, err := client.ListWorkspacesRerankModels()
+		if err != nil {
+			log.Println("failed to list rerank models:", err)
+		} else {
+			log.Println(reRankModels)
 		}
 
 		// UploadFileToDatasets(client)
