@@ -43,10 +43,10 @@ func main() {
 	}
 	fmt.Println(parametersResponse)
 
-	// msgID := CompletionMessages(client)
-	// FileUpload(client)
-	// CompletionMessagesStop(client)
-	// MessagesFeedbacks(client, msgID)
+	msgID := CompletionMessages(client)
+	FileUpload(client)
+	CompletionMessagesStop(client)
+	MessagesFeedbacks(client, msgID)
 	// TextToAudio(client)
 
 	CONSOLE_USER := os.Getenv("DIFY_CONSOLE_USER")

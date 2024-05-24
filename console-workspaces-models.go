@@ -61,3 +61,24 @@ func (dc *DifyClient) ListWorkspacesRerankModels() (result ListWorkspacesRerankM
 	}
 	return result, nil
 }
+
+type GetCurrentWorkspaceRerankDefaultModelResponse struct {
+	Data any `json:"data"`
+}
+
+func (dc *DifyClient) GetCurrentWorkspaceRerankDefaultModel() (result GetCurrentWorkspaceRerankDefaultModelResponse, err error) {
+	api := dc.GetConsoleAPI(CONSOLE_API_CURRENT_WORKSPACE_RERANK_MODEL)
+
+	code, body, err := SendGetRequestToConsole(dc, api)
+
+	err = CommonRiskForSendRequest(code, err)
+	if err != nil {
+		return result, err
+	}
+
+	err = json.Unmarshal(body, &result)
+	if err != nil {
+		return result, fmt.Errorf("failed to unmarshal the response: %v", err)
+	}
+	return result, nil
+}

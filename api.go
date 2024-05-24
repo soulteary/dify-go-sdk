@@ -36,7 +36,8 @@ const (
 	CONSOLE_API_DATASETS_DELETE   = "/datasets/:datasets_id"
 	CONSOLE_API_PARAM_DATASETS_ID = ":datasets_id"
 
-	CONSOLE_API_WORKSPACES_RERANK_MODEL = "/workspaces/current/models/model-types/rerank"
+	CONSOLE_API_WORKSPACES_RERANK_MODEL        = "/workspaces/current/models/model-types/rerank"
+	CONSOLE_API_CURRENT_WORKSPACE_RERANK_MODEL = "/workspaces/current/default-model?model_type=rerank"
 )
 
 func (dc *DifyClient) GetAPI(api string) string {
