@@ -3,9 +3,6 @@ package dify
 import (
 	"encoding/json"
 	"fmt"
-	"io"
-	"net/http"
-	"strings"
 )
 
 type CompletionMessagesPayload struct {
@@ -60,37 +57,15 @@ func (dc *DifyClient) CompletionMessages(inputs string, conversation_id string, 
 		return result, fmt.Errorf("files are not supported")
 	}
 
-	buf, err := json.Marshal(payload)
-	if err != nil {
-		return result, err
-	}
-	req, err := http.NewRequest("POST", dc.GetAPI(API_COMPLETION_MESSAGES), strings.NewReader(string(buf)))
-	if err != nil {
-		return result, err
-	}
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", dc.Key))
-	req.Header.Set("Content-Type", "application/json")
+	api := dc.GetAPI(API_COMPLETION_MESSAGES)
+	code, body, err := SendPostRequestToAPI(dc, api, payload)
 
-	resp, err := dc.Client.Do(req)
-	if err != nil {
-		return result, err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		bodyText, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return result, fmt.Errorf("status code: %d, could not read the body", resp.StatusCode)
-		}
-		return result, fmt.Errorf("status code: %d, %s", resp.StatusCode, bodyText)
-	}
-
-	bodyText, err := io.ReadAll(resp.Body)
+	err = CommonRiskForSendRequest(code, err)
 	if err != nil {
 		return result, err
 	}
 
-	err = json.Unmarshal(bodyText, &result)
+	err = json.Unmarshal(body, &result)
 	if err != nil {
 		return result, fmt.Errorf("failed to unmarshal the response: %v", err)
 	}
@@ -123,38 +98,17 @@ func (dc *DifyClient) CompletionMessagesStreaming(inputs string, conversation_id
 		return "", fmt.Errorf("files are not supported")
 	}
 
-	buf, err := json.Marshal(payload)
-	if err != nil {
-		return "", err
-	}
-	req, err := http.NewRequest("POST", dc.GetAPI(API_COMPLETION_MESSAGES), strings.NewReader(string(buf)))
-	if err != nil {
-		return "", err
-	}
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", dc.Key))
-	req.Header.Set("Content-Type", "application/json")
+	api := dc.GetAPI(API_COMPLETION_MESSAGES)
+	code, body, err := SendPostRequestToAPI(dc, api, payload)
 
-	resp, err := dc.Client.Do(req)
+	err = CommonRiskForSendRequest(code, err)
 	if err != nil {
-		return "", err
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != 200 {
-		bodyText, err := io.ReadAll(resp.Body)
-		if err != nil {
-			return "", fmt.Errorf("status code: %d, could not read the body", resp.StatusCode)
-		}
-		return "", fmt.Errorf("status code: %d, %s", resp.StatusCode, bodyText)
+		return result, err
 	}
 
-	if !strings.Contains(resp.Header.Get("Content-Type"), "text/event-stream") {
-		return "", fmt.Errorf("response is not a streaming response")
-	}
+	// if !strings.Contains(resp.Header.Get("Content-Type"), "text/event-stream") {
+	// 	return "", fmt.Errorf("response is not a streaming response")
+	// }
 
-	bodyText, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", err
-	}
-	return string(bodyText), nil
+	return string(body), nil
 }

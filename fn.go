@@ -8,16 +8,6 @@ import (
 	"strings"
 )
 
-func setConsoleAuthorization(dc *DifyClient, req *http.Request) {
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", dc.ConsoleToken))
-	req.Header.Set("Content-Type", "application/json")
-}
-
-func setAPIAuthorization(dc *DifyClient, req *http.Request) {
-	req.Header.Set("Authorization", fmt.Sprintf("Bearer %s", dc.Key))
-	req.Header.Set("Content-Type", "application/json")
-}
-
 func SendGetRequest(forConsole bool, dc *DifyClient, api string) (httpCode int, bodyText []byte, err error) {
 	req, err := http.NewRequest("GET", api, nil)
 	if err != nil {
@@ -40,15 +30,7 @@ func SendGetRequest(forConsole bool, dc *DifyClient, api string) (httpCode int, 
 	return resp.StatusCode, bodyText, err
 }
 
-func SendGetRequestToAPI(dc *DifyClient, api string) (httpCode int, bodyText []byte, err error) {
-	return SendGetRequest(false, dc, api)
-}
-
-func SendGetRequestToConsole(dc *DifyClient, api string) (httpCode int, bodyText []byte, err error) {
-	return SendGetRequest(true, dc, api)
-}
-
-func SendPostRequestToConsole(dc *DifyClient, api string, postBody interface{}) (httpCode int, bodyText []byte, err error) {
+func SendPostRequest(forConsole bool, dc *DifyClient, api string, postBody interface{}) (httpCode int, bodyText []byte, err error) {
 	var payload *strings.Reader
 	if postBody != nil {
 		buf, err := json.Marshal(postBody)
@@ -65,7 +47,11 @@ func SendPostRequestToConsole(dc *DifyClient, api string, postBody interface{}) 
 		return -1, nil, err
 	}
 
-	setConsoleAuthorization(dc, req)
+	if forConsole {
+		setConsoleAuthorization(dc, req)
+	} else {
+		setAPIAuthorization(dc, req)
+	}
 
 	resp, err := dc.Client.Do(req)
 	if err != nil {
