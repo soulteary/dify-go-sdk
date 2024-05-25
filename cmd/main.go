@@ -103,7 +103,33 @@ func main() {
 			log.Println(reRankModels)
 		}
 
-		// UploadFileToDatasets(client)
+		log.Println("Upload file to datasets")
+		err = os.WriteFile("testfile-for-dify-database.txt", []byte("test file for dify database"), 0644)
+		if err != nil {
+			log.Fatalf("failed to create file: %v\n", err)
+			return
+		}
+		result, err := client.DatasetsFileUpload("testfile-for-dify-database.txt", "testfile-for-dify-database.txt")
+		if err != nil {
+			log.Fatalf("failed to upload file to datasets: %v\n", err)
+			return
+		}
+		fileID := result.ID
+		log.Println(result)
+
+		initResult, err := client.InitDatasetsByUploadFile([]string{fileID})
+		if err != nil {
+			log.Fatalf("failed to init datasets by upload file: %v\n", err)
+			return
+		}
+		log.Println(initResult)
+
+		initStatus, err := client.InitDatasetsIndexingStatus(initResult.Dataset.ID)
+		if err != nil {
+			log.Fatalf("failed to get init datasets indexing status: %v\n", err)
+			return
+		}
+		log.Println(initStatus)
 	}
 }
 
@@ -190,18 +216,4 @@ func GetUserToken(client *dify.DifyClient, email, password string) string {
 		return ""
 	}
 	return result.Data
-}
-
-func UploadFileToDatasets(client *dify.DifyClient) {
-	err := os.WriteFile("testfile-for-dify-database.txt", []byte("test file for dify database"), 0644)
-	if err != nil {
-		log.Fatalf("failed to create file: %v\n", err)
-		return
-	}
-	result, err := client.DatasetsFileUpload("testfile-for-dify-database.txt", "testfile-for-dify-database.txt")
-	if err != nil {
-		log.Fatalf("failed to upload file to datasets: %v\n", err)
-		return
-	}
-	fmt.Println(result)
 }

@@ -31,10 +31,13 @@ const (
 	CONSOLE_API_FILE_UPLOAD = "/files/upload?source=datasets"
 	CONSOLE_API_LOGIN       = "/login"
 
-	CONSOLE_API_DATASETS_CREATE   = "/datasets"
-	CONSOLE_API_DATASETS_LIST     = "/datasets"
-	CONSOLE_API_DATASETS_DELETE   = "/datasets/:datasets_id"
 	CONSOLE_API_PARAM_DATASETS_ID = ":datasets_id"
+
+	CONSOLE_API_DATASETS_CREATE      = "/datasets"
+	CONSOLE_API_DATASETS_LIST        = "/datasets"
+	CONSOLE_API_DATASETS_DELETE      = "/datasets/:datasets_id"
+	CONSOLE_API_DATASETS_INIT        = "/datasets/init"
+	CONSOLE_API_DATASETS_INIT_STATUS = "/datasets/:datasets_id/indexing-status"
 
 	CONSOLE_API_WORKSPACES_RERANK_MODEL        = "/workspaces/current/models/model-types/rerank"
 	CONSOLE_API_CURRENT_WORKSPACE_RERANK_MODEL = "/workspaces/current/default-model?model_type=rerank"
